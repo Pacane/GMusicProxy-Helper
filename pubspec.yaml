@@ -1,5 +1,5 @@
 name: gmusic_proxy_helper
-version: 0.0.1
+version: 0.0.2
 description: A simple console application.
 author: Joel Trottier-Hebert <iamquebecois@gmail.com>
 homepage: https://github.com/Pacane/GMusicProxy-Helper
@@ -8,3 +8,5 @@ dependencies:
   unscripted: '>=0.6.2 <0.7.0'
 dev_dependencies:
   test: '>=0.12.12 <0.13.0'
+executables:
+  gph:
