@@ -58,11 +58,11 @@ class GetAllStations {
     var playlistName = '';
 
     for (var line in lines) {
-      if (line == '#EXTm3U') {
+      if (line.startsWith('#EXTM3U') || line.startsWith('\n')) {
         continue;
       }
 
-      if (line.startsWith('#')) {
+      if (line.startsWith('#EXTINF')) {
         playlistName = line
             .replaceAll('#EXTINF:-1,', '')
             .replaceAll(' ', '_')
@@ -77,7 +77,8 @@ class GetAllStations {
       print('Writing $playlistName');
 
       await new File(playlistFilename).create();
-      await new File(playlistFilename).writeAsString(downloadedPlaylist.body);
+      var contentToWrite = downloadedPlaylist.body;
+      await new File(playlistFilename).writeAsString(contentToWrite);
     }
   }
 }
