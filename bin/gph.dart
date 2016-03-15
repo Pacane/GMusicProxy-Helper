@@ -12,13 +12,19 @@ Client _client = new Client();
 
 /// The root command for the CLI executable
 class RootCommand extends Object with GetStationByArtist, GetAllStations {
+  /// Available commands:
+  /// artist
+  /// stations
   @Command(
-      help: 'Google Play Music Proxy Helper',
+      help: 'GMusic Proxy Helper',
       plugins: const [const Completion()])
   RootCommand();
 }
 
+/// The command to get a station from an artist name.
 class GetStationByArtist {
+  /// example:
+  /// gph artist metallica
   @SubCommand(help: 'Search artist name.')
   Future<Null> artist(String query) async {
     var queryParameters = <String, String>{
@@ -35,7 +41,10 @@ class GetStationByArtist {
   }
 }
 
+/// Get all stations command.
 class GetAllStations {
+  /// example:
+  /// gph stations
   @SubCommand(help: 'Get all registered stations.')
   Future<Null> stations() async {
     var uri = new Uri.http(baseUrl, 'get_all_stations');
