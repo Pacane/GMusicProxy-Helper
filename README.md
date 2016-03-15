@@ -11,10 +11,17 @@ It allows you to download `m3u` playlists from Google Play Music and play them a
 client (such as [ncmpcpp](http://rybczak.net/ncmpcpp/)).
 
 ## Install
-Right now the package isn't deployed to pub, so you have to clone the project and run the executable.
+Install the executable using:
 
 ```bash
-$ main.dart help
+$ pub global activate gmusic_proxy_helper
+```
+
+
+## Usage
+
+```bash
+$ gph help
 ```
 
 Will give you all the options.
