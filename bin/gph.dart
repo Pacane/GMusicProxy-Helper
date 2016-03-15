@@ -2,6 +2,7 @@ import 'package:unscripted/unscripted.dart';
 import 'package:http/http.dart';
 import 'dart:async';
 
+/// The main function dispatches all arguments to the Root command.
 Future<dynamic> main(List<String> arguments) =>
     new Script(RootCommand).execute(arguments);
 
