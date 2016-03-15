@@ -1,6 +1,7 @@
 import 'package:unscripted/unscripted.dart';
 import 'package:http/http.dart';
 import 'dart:async';
+import 'dart:io';
 
 /// The main function dispatches all arguments to the Root command.
 Future<dynamic> main(List<String> arguments) =>
@@ -16,9 +17,7 @@ class RootCommand extends Object with GetStationByArtist, GetAllStations {
   /// Available commands:
   /// artist
   /// stations
-  @Command(
-      help: 'GMusic Proxy Helper',
-      plugins: const [const Completion()])
+  @Command(help: 'GMusic Proxy Helper', plugins: const [const Completion()])
   RootCommand();
 }
 
@@ -47,10 +46,38 @@ class GetAllStations {
   /// example:
   /// gph stations
   @SubCommand(help: 'Get all registered stations.')
-  Future<Null> stations() async {
+  Future<Null> stations(String outputDirectory) async {
     var uri = new Uri.http(baseUrl, 'get_all_stations');
 
     var response = await _client.get(uri);
+
     print(response.body);
+
+    var lines = response.body.split('\n');
+
+    var playlistName = '';
+
+    for (var line in lines) {
+      if (line == '#EXTm3U') {
+        continue;
+      }
+
+      if (line.startsWith('#')) {
+        playlistName = line
+            .replaceAll('#EXTINF:-1,', '')
+            .replaceAll(' ', '_')
+            .replaceAll('/', '_');
+        continue;
+      }
+
+      var downloadedPlaylist = await _client.get(line);
+
+      var playlistFilename = '$outputDirectory/$playlistName.m3u';
+
+      print('Writing $playlistName');
+
+      await new File(playlistFilename).create();
+      await new File(playlistFilename).writeAsString(downloadedPlaylist.body);
+    }
   }
 }
