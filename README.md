@@ -22,7 +22,7 @@ $ pub global activate gmusic_proxy_helper
 Make sure you have [GMusic Proxy](http://gmusicproxy.net/) configured and running.
 
 ```bash
-$ gph help
+$ gph --help
 ```
 
 Will give you all the options.
