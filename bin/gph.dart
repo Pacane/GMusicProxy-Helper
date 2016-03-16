@@ -3,6 +3,9 @@ import 'package:http/http.dart';
 import 'dart:async';
 import 'dart:io';
 
+/// The default amount of songs to fetch, when configurable.
+final int numberOfSongsToFetch = 100;
+
 /// The main function dispatches all arguments to the Root command.
 Future<dynamic> main(List<String> arguments) =>
     new Script(RootCommand).execute(arguments);
@@ -13,7 +16,7 @@ String baseUrl = 'localhost:9999';
 Client _client = new Client();
 
 /// The root command for the CLI executable
-class RootCommand extends Object with GetStationByArtist, GetAllStations {
+class RootCommand extends Object with GetNewStation, GetAllStations {
   /// Available commands:
   /// artist
   /// stations
@@ -21,17 +24,41 @@ class RootCommand extends Object with GetStationByArtist, GetAllStations {
   RootCommand();
 }
 
-/// The command to get a station from an artist name.
-class GetStationByArtist {
+/// The command to get a new station from an artist name.
+class GetNewStation {
   /// example:
-  /// gph artist metallica
-  @SubCommand(help: 'Search artist name.')
-  Future<Null> artist(String query) async {
-    var queryParameters = <String, String>{
-      'type': 'artist',
-      'artist': query,
-      'num_tracks': 100.toString()
-    };
+  /// gph station --artist metallica
+  /// gph station --song 'enter sandman'
+  @SubCommand(help: 'Fetch a new station.', allowTrailingOptions: true)
+  Future<Null> station(
+      @Rest(required: true, help: 'The text that will be used for the query', valueHelp: 'Song title or Artist name')
+          List<String> query,
+      {@Flag(name: 'artist', help: 'By artist', abbr: 'a', defaultsTo: false)
+          bool artist,
+      @Flag(name: 'song', help: 'By song name', abbr: 's', defaultsTo: false)
+          bool song}) async {
+    var queryParameters = <String, String>{};
+
+    var queryString = query.join(' ');
+
+    if (artist) {
+      print('Searching by artist: $queryString');
+      queryParameters = <String, String>{
+        'type': 'artist',
+        'artist': queryString,
+        'num_tracks': numberOfSongsToFetch.toString()
+      };
+    } else if (song) {
+      print('Searching by song: $query');
+      queryParameters = <String, String>{
+        'type': 'song',
+        'title': queryString,
+        'num_tracks': numberOfSongsToFetch.toString()
+      };
+    } else {
+      print('Cannot search for nothing.');
+      return;
+    }
 
     var uri =
         new Uri.http(baseUrl, 'get_new_station_by_search', queryParameters);
@@ -50,7 +77,6 @@ class GetAllStations {
     var uri = new Uri.http(baseUrl, 'get_all_stations');
 
     var response = await _client.get(uri);
-
     print(response.body);
 
     var lines = response.body.split('\n');
