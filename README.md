@@ -19,9 +19,25 @@ $ pub global activate gmusic_proxy_helper
 
 
 ## Usage
+Make sure you have [GMusic Proxy](http://gmusicproxy.net/) configured and running.
 
 ```bash
 $ gph help
 ```
 
 Will give you all the options.
+
+### Fetch all your stations
+```bash
+$ gph stations > ~/.config/gpd/playlists
+```
+
+### Get a new station from artist name
+```bash
+$ gph station -a metallica
+```
+
+### Get a new station from song title
+```bash
+$ gph station -s enter sandman
+```
