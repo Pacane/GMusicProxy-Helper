@@ -29,15 +29,17 @@ Will give you all the options.
 
 ### Fetch all your stations
 ```bash
-$ gph stations > ~/.config/gpd/playlists
+$ gph stations > ~/.config/mpd/playlists
 ```
 
 ### Get a new station from artist name
 ```bash
-$ gph station -a metallica
+$ gph station -a metallica > ~/.config/mpd/playlists/metallica.m3u
 ```
 
 ### Get a new station from song title
 ```bash
-$ gph station -s enter sandman
+$ gph station -s enter sandman > ~/.config/mpd/playlists/enter_sandman.m3u
 ```
+
+Note that it'll eventually be possible to configure the playlists directory.
