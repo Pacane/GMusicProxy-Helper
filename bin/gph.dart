@@ -103,7 +103,8 @@ class GetDiscography {
 
     var response = await _client.get(uri);
 
-    await _writeMultiplePlaylists(response.body, outputDirectory);
+    await _writeMultiplePlaylists(response.body, outputDirectory,
+        artistName: artistName);
 
     return null;
   }
@@ -142,12 +143,15 @@ Future _writeMultiplePlaylists(String body, String outputDirectory,
     var downloadedPlaylist = await _client.get(line);
 
     var sanitizedArtistName =
-        artistName.trim().replaceAll('/', '_').replaceAll(' ', '_');
+        artistName.replaceAll('/', '_').replaceAll(' ', '_');
 
-    var playlistFilename =
-        '$outputDirectory/${sanitizedArtistName}_$playlistName.m3u';
+    var playlistFilename = '';
 
-    print('Writing $playlistName');
+    playlistFilename = sanitizedArtistName.isNotEmpty
+        ? '$outputDirectory/${sanitizedArtistName}_$playlistName.m3u'
+        : '$outputDirectory/$playlistName.m3u';
+
+    print('Writing $playlistFilename');
 
     await new File(playlistFilename).create();
     var contentToWrite = downloadedPlaylist.body;
