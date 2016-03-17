@@ -142,7 +142,7 @@ Future _writeMultiplePlaylists(String body, String outputDirectory,
     var downloadedPlaylist = await _client.get(line);
 
     var sanitizedArtistName =
-        artistName.replaceAll('/', '_').replaceAll(' ', '_');
+        artistName.trim().replaceAll('/', '_').replaceAll(' ', '_');
 
     var playlistFilename =
         '$outputDirectory/${sanitizedArtistName}_$playlistName.m3u';
