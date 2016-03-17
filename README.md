@@ -19,6 +19,8 @@ $ pub global activate gmusic_proxy_helper
 
 
 ## Usage
+**IMPORTANT** **You need Google Play Music All Access to use this**
+
 Make sure you have [GMusic Proxy](http://gmusicproxy.net/) configured and running.
 
 ```bash

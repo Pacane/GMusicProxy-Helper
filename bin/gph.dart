@@ -2,6 +2,7 @@ import 'package:unscripted/unscripted.dart';
 import 'package:http/http.dart';
 import 'dart:async';
 import 'dart:io';
+import 'package:quiver/strings.dart';
 
 /// The default amount of songs to fetch, when configurable.
 final int numberOfSongsToFetch = 100;
@@ -16,7 +17,8 @@ String baseUrl = 'localhost:9999';
 Client _client = new Client();
 
 /// The root command for the CLI executable
-class RootCommand extends Object with GetNewStation, GetAllStations {
+class RootCommand extends Object
+    with GetNewStation, GetAllStations, GetDiscography {
   /// Available commands:
   /// artist
   /// stations
@@ -79,32 +81,73 @@ class GetAllStations {
     var response = await _client.get(uri);
     print(response.body);
 
-    var lines = response.body.split('\n');
+    await _writeMultiplePlaylists(response.body, outputDirectory);
+  }
+}
 
-    var playlistName = '';
+/// Get artist discography command.
+class GetDiscography {
+  /// example:
+  /// gph discography Metallica
+  @SubCommand(help: 'Get the discography of an artist.')
+  Future<Null> discography(String artistName, String outputDirectory) async {
+    var artistId = await _getArtistId(artistName);
 
-    for (var line in lines) {
-      if (line.startsWith('#EXTM3U') || line.startsWith('\n')) {
-        continue;
-      }
-
-      if (line.startsWith('#EXTINF')) {
-        playlistName = line
-            .replaceAll('#EXTINF:-1,', '')
-            .replaceAll(' ', '_')
-            .replaceAll('/', '_');
-        continue;
-      }
-
-      var downloadedPlaylist = await _client.get(line);
-
-      var playlistFilename = '$outputDirectory/$playlistName.m3u';
-
-      print('Writing $playlistName');
-
-      await new File(playlistFilename).create();
-      var contentToWrite = downloadedPlaylist.body;
-      await new File(playlistFilename).writeAsString(contentToWrite);
+    if (isEmpty(artistId)) {
+      print("No ArtistId found");
+      return null;
     }
+
+    var uri = new Uri.http(
+        baseUrl, 'get_discography_artist', <String, String>{'id': artistId});
+
+    var response = await _client.get(uri);
+
+    await new Directory('$outputDirectory/$artistName').create();
+
+    _writeMultiplePlaylists(response.body, '$outputDirectory/$artistName');
+
+    return null;
+  }
+}
+
+Future<String> _getArtistId(String artistName) async {
+  var uri = new Uri.http(baseUrl, 'search_id');
+
+  uri = uri.replace(queryParameters: {'type': 'artist', 'artist': artistName});
+
+  var response = await _client.get(uri);
+  return response.body;
+}
+
+Future _writeMultiplePlaylists(String body, String outputDirectory) async {
+  var lines = body.split('\n');
+
+  var playlistName = '';
+
+  for (var line in lines) {
+    if (line.startsWith('#EXTM3U') || isEmpty(line)) {
+      continue;
+    }
+
+    if (line.startsWith('#EXTINF')) {
+      playlistName = line
+          .replaceAll('#EXTINF:-1,', '')
+          .replaceAll(' ', '_')
+          .replaceAll('/', '_');
+      continue;
+    } else if (isEmpty(line)) {
+      continue;
+    }
+
+    var downloadedPlaylist = await _client.get(line);
+
+    var playlistFilename = '$outputDirectory/$playlistName.m3u';
+
+    print('Writing $playlistName');
+
+    await new File(playlistFilename).create();
+    var contentToWrite = downloadedPlaylist.body;
+    await new File(playlistFilename).writeAsString(contentToWrite);
   }
 }

@@ -6,6 +6,7 @@ homepage: https://github.com/Pacane/GMusicProxy-Helper
 dependencies:
   http: '>=0.11.3+3 <0.12.0'
   unscripted: '>=0.6.2 <0.7.0'
+  quiver: '>=0.21.4 <0.22.0'
 dev_dependencies:
   test: '>=0.12.12 <0.13.0'
 executables:
