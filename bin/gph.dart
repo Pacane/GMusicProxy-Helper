@@ -103,11 +103,7 @@ class GetDiscography {
 
     var response = await _client.get(uri);
 
-    var sanitizedArtistName = artistName.replaceAll('/', '_').replaceAll(' ', '_');
-    await new Directory('$outputDirectory/$sanitizedArtistName').create();
-
-    await _writeMultiplePlaylists(
-        response.body, '$outputDirectory/$sanitizedArtistName');
+    await _writeMultiplePlaylists(response.body, outputDirectory);
 
     return null;
   }
@@ -122,7 +118,8 @@ Future<String> _getArtistId(String artistName) async {
   return response.body;
 }
 
-Future _writeMultiplePlaylists(String body, String outputDirectory) async {
+Future _writeMultiplePlaylists(String body, String outputDirectory,
+    {String artistName: ''}) async {
   var lines = body.split('\n');
 
   var playlistName = '';
@@ -144,7 +141,11 @@ Future _writeMultiplePlaylists(String body, String outputDirectory) async {
 
     var downloadedPlaylist = await _client.get(line);
 
-    var playlistFilename = '$outputDirectory/$playlistName.m3u';
+    var sanitizedArtistName =
+        artistName.replaceAll('/', '_').replaceAll(' ', '_');
+
+    var playlistFilename =
+        '$outputDirectory/${sanitizedArtistName}_$playlistName.m3u';
 
     print('Writing $playlistName');
 
