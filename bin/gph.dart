@@ -103,9 +103,11 @@ class GetDiscography {
 
     var response = await _client.get(uri);
 
-    await new Directory('$outputDirectory/$artistName').create();
+    var sanitizedArtistName = artistName.replaceAll('/', '_').replaceAll(' ', '_');
+    await new Directory('$outputDirectory/$sanitizedArtistName').create();
 
-    _writeMultiplePlaylists(response.body, '$outputDirectory/$artistName');
+    await _writeMultiplePlaylists(
+        response.body, '$outputDirectory/$sanitizedArtistName');
 
     return null;
   }

@@ -44,4 +44,9 @@ $ gph station -a metallica > ~/.config/mpd/playlists/metallica.m3u
 $ gph station -s enter sandman > ~/.config/mpd/playlists/enter_sandman.m3u
 ```
 
+### Get an artist's discography (from Artist name)
+```bash
+$ gph discography "Liquid Tension Experiment" > ~/.config/mpd/playlists
+```
+
 Note that it'll eventually be possible to configure the playlists directory.
