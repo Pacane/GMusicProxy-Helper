@@ -31,21 +31,25 @@ Will give you all the options.
 
 ### Fetch all your stations
 ```bash
+# gph stations > /path/to/outputDirectory
 $ gph stations > ~/.config/mpd/playlists
 ```
 
 ### Get a new station from artist name
 ```bash
+# gph station -a artistName > /path/to/playlist
 $ gph station -a metallica > ~/.config/mpd/playlists/metallica.m3u
 ```
 
 ### Get a new station from song title
 ```bash
+# gph station -s songName > /path/to/playlist
 $ gph station -s enter sandman > ~/.config/mpd/playlists/enter_sandman.m3u
 ```
 
 ### Get an artist's discography (from Artist name)
 ```bash
+# gph discography artistName /path/to/outputDirectory
 $ gph discography "Liquid Tension Experiment" ~/.config/mpd/playlists
 ```
 
